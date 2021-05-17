@@ -1,0 +1,51 @@
+version: 2.1
+commands:
+  npm_ci:
+    description: Resolve node_modules from cache or execute npm ci
+    steps:
+      - restore_cache:
+          key: v1-npm-deps-{{ checksum "package-lock.json" }}
+      - run:
+          name: npm ci (if no cache)
+          command: |
+            if [ ! -d node_modules ]; then
+              echo "No cached node_modules found, running npm ci"
+              echo "//registry.npmjs.org/:_authToken=${HX_NPM_TOKEN_RO}" >> ./.npmrc
+              npm ci
+            else
+              echo "Cached node_modules found, skipping npm ci"
+            fi
+      - save_cache:
+          key: v1-npm-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+jobs:
+  build_and_test:
+    docker:
+      - image: cimg/node:14.15
+    steps:
+      - checkout
+      - npm_ci
+  semantic_release:
+    docker:
+      - image: cimg/node:14.15
+    steps:
+      - checkout
+      - npm_ci
+      - run: npx semantic-release
+workflows:
+  default:
+    jobs:
+      # Run for WIP branches
+      - build_and_test:
+          context: hx-npm
+          filters:
+            branches:
+              ignore:
+                - /^master$/
+      # Run for main branch
+      - semantic_release:
+          context: hx-npm
+          filters:
+            branches:
+              only: /^master$/
