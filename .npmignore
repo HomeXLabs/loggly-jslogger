@@ -3,3 +3,5 @@ Gruntfile.js
 bower.json
 .editorconfig
 package-lock.json
+.releaserc
+.nvmrc
