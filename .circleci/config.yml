@@ -27,6 +27,7 @@ jobs:
       - checkout
       - npm_ci
       - run: npm run build
+      - run: npm run test
   semantic_release:
     docker:
       - image: cimg/node:14.15
