@@ -5,7 +5,7 @@
   "browser": "index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/loggly/loggly-jslogger.git"
+    "url": "git://github.com/HomeXLabs/loggly-jslogger"
   },
   "author": "Loggly",
   "keywords": [
