@@ -26,12 +26,14 @@ jobs:
     steps:
       - checkout
       - npm_ci
+      - run: npm run build
   semantic_release:
     docker:
       - image: cimg/node:14.15
     steps:
       - checkout
       - npm_ci
+      - run: npm run build
       - run: npx semantic-release
 workflows:
   default:
