@@ -33,6 +33,6 @@
   },
   "scripts": {
     "build": "grunt",
-    "test": "jasmine jasminetest/loggly-tracker-spec.js"
+    "test": "npm run build && jasmine"
   }
 }
