@@ -1,0 +1,29 @@
+name: Create release branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Semantic version tag to create the release branch from
+        required: true
+        type: string
+
+jobs:
+  release-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Initialize the repo
+        uses: actions/checkout@v4
+
+      - name: Create release branch
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          # Check for tag
+          if [ -z $(git tag -l "$RELEASE_TAG") ]; then
+            echo "Tag $RELEASE_TAG doesn't exist"
+            exit 1
+
+          git checkout tags/"$RELEASE_TAG" -b release/"$RELEASE_TAG"
+
+          echo "Release branch created: release/$RELEASE_TAG"
