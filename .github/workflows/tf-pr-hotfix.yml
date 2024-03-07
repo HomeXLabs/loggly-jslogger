@@ -1,0 +1,35 @@
+name: PR hotfix changes
+
+on:
+  push:
+    branches:
+      - 'release/*v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  pr-hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Initialize the repo
+        uses: actions/checkout@v4
+
+      - name: PR hotfix changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          # Check if a PR already exists and is open
+          output=$(gh pr list --head ${{ github.ref_name }} --state open | cat)
+          if [[ -n $output ]]; then
+            url=$(gh pr list --head ${{ github.ref_name }} --state open --json url | rev | cut -d "\"" -f 2 | rev)
+            echo "An open pull request already exists at $url, exiting"
+            exit 0
+          fi
+
+          echo "Opening pull request to merge changes from ${{ github.ref_name }}"
+          gh pr create \
+            --base $DEFAULT_BRANCH \
+            --head ${{ github.ref_name }} \
+            --title "fix: apply hotfix changes from ${{ github.ref_name }}"
+
+          url=$(gh pr list --head ${{ github.ref_name }} --state open --json url | rev | cut -d "\"" -f 2 | rev)
+          echo "Successfully opened pull request at $url"
