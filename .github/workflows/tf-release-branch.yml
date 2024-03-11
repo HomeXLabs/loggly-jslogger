@@ -23,6 +23,7 @@ jobs:
           if [ -z $(git tag -l "$RELEASE_TAG") ]; then
             echo "Tag $RELEASE_TAG doesn't exist"
             exit 1
+          fi
 
           git checkout tags/"$RELEASE_TAG" -b release/"$RELEASE_TAG"
 
